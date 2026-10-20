@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SlotWise – Free Timetable Maker for Students & Teachers</title>
+<meta name="description" content="Make a clean, colour-coded timetable in 2 minutes. Free. No sign up. Print it or download it.">
+<meta name="theme-color" content="#4f46e5">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%234f46e5'/><text x='50' y='68' font-size='56' text-anchor='middle'>🗓</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --brand:#4f46e5; --brand-2:#7c3aed; --accent:#f59e0b;
+    --ink:#0f172a; --muted:#64748b; --bg:#f8fafc; --card:#ffffff; --line:#e2e8f0;
+    --radius:18px; --shadow:0 10px 30px rgba(15,23,42,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+  h1,h2,h3{font-family:'Poppins',sans-serif;line-height:1.2}
+  a{color:inherit;text-decoration:none}
+  .wrap{width:min(1120px,92%);margin-inline:auto}
+  section{padding:84px 0}
+  .tag{display:inline-block;background:#eef2ff;color:var(--brand);font-weight:600;font-size:.82rem;padding:6px 14px;border-radius:99px;margin-bottom:14px}
+  .title{font-size:clamp(1.7rem,3.5vw,2.5rem);margin-bottom:12px}
+  .sub{color:var(--muted);max-width:620px}
+  .center{text-align:center}.center .sub{margin-inline:auto}
+
+  /* NAV */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{font-family:'Poppins';font-weight:800;font-size:1.35rem;display:flex;align-items:center;gap:10px}
+  .logo i{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand-2));display:grid;place-items:center;font-style:normal;font-size:1.1rem}
+  .links{display:flex;gap:28px;align-items:center;font-weight:500;color:#334155}
+  .links a:hover{color:var(--brand)}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;font:600 1rem 'Inter';padding:13px 26px;border-radius:12px;transition:.2s}
+  .btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 8px 20px rgba(79,70,229,.35)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(79,70,229,.45)}
+  .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+  .btn-sm{padding:9px 16px;font-size:.9rem;border-radius:10px}
+  .menu{display:none;background:none;border:0;font-size:1.6rem;cursor:pointer}
+
+  /* HERO */
+  .hero{padding:90px 0 70px;background:
+    radial-gradient(900px 400px at 85% -10%,rgba(124,58,237,.18),transparent),
+    radial-gradient(700px 400px at 0% 10%,rgba(79,70,229,.15),transparent)}
+  .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}
+  .hero h1{font-size:clamp(2.2rem,5vw,3.6rem);margin-bottom:18px}
+  .hero h1 span{background:linear-gradient(135deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--muted);font-size:1.12rem;margin-bottom:28px;max-width:520px}
+  .cta{display:flex;gap:14px;flex-wrap:wrap}
+  .stats{display:flex;gap:34px;margin-top:38px}
+  .stats b{font-family:'Poppins';font-size:1.6rem;display:block}
+  .stats small{color:var(--muted)}
+  .mock{background:#fff;border-radius:22px;box-shadow:var(--shadow);padding:20px;border:1px solid var(--line);transform:rotate(2deg);animation:float 6s ease-in-out infinite}
+  @keyframes float{50%{transform:rotate(2deg) translateY(-12px)}}
+  .mock .row{display:grid;grid-template-columns:54px repeat(3,1fr);gap:8px;margin-bottom:8px;font-size:.78rem;font-weight:600}
+  .mock .row div{padding:10px 6px;border-radius:10px;text-align:center;background:#f1f5f9;color:#475569}
+  .mock .row .t{background:none;color:var(--muted);font-weight:500}
+  .c1{background:#dbeafe!important;color:#1e40af!important}.c2{background:#dcfce7!important;color:#166534!important}
+  .c3{background:#fef3c7!important;color:#92400e!important}.c4{background:#fce7f3!important;color:#9d174d!important}
+  .c5{background:#ede9fe!important;color:#5b21b6!important}
+
+  /* FEATURES */
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;transition:.25s}
+  .card:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:#c7d2fe}
+  .card .ic{width:52px;height:52px;border-radius:14px;background:#eef2ff;display:grid;place-items:center;font-size:1.5rem;margin-bottom:16px}
+  .card h3{font-size:1.1rem;margin-bottom:8px}
+  .card p{color:var(--muted);font-size:.96rem}
+
+  /* STEPS */
+  .steps{counter-reset:s;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:44px}
+  .step{position:relative;padding:26px;background:#fff;border-radius:var(--radius);border:1px solid var(--line)}
+  .step::before{counter-increment:s;content:counter(s);position:absolute;top:-18px;left:24px;width:38px;height:38px;border-radius:50%;background:var(--accent);color:#fff;font:700 1.05rem 'Poppins';display:grid;place-items:center;box-shadow:0 6px 14px rgba(245,158,11,.4)}
+  .step h3{font-size:1.02rem;margin:8px 0 6px}.step p{color:var(--muted);font-size:.93rem}
+
+  /* MAKER */
+  #maker{background:linear-gradient(180deg,#eef2ff,#f8fafc)}
+  .maker{display:grid;grid-template-columns:320px 1fr;gap:26px;margin-top:40px;align-items:start}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
+  .panel h3{font-size:1.05rem;margin-bottom:14px}
+  label{display:block;font-weight:600;font-size:.85rem;margin:14px 0 6px;color:#334155}
+  input[type=text],input[type=number],input[type=time],select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:500 .95rem 'Inter';background:#fff;color:var(--ink)}
+  input:focus,select:focus{outline:2px solid #c7d2fe;border-color:var(--brand)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .days{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .days label{margin:0;display:flex;align-items:center;gap:5px;font-weight:500;background:#f1f5f9;padding:6px 11px;border-radius:99px;cursor:pointer;font-size:.85rem}
+  .days input:checked+span{color:var(--brand);font-weight:700}
+  .addrow{display:flex;gap:8px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;min-height:34px}
+  .chip{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;border-radius:99px;font-size:.85rem;font-weight:600}
+  .chip button{border:0;background:rgba(0,0,0,.12);color:inherit;width:20px;height:20px;border-radius:50%;cursor:pointer;line-height:1}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+  .tablewrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line)}
+  table{width:100%;border-collapse:collapse;min-width:560px;background:#fff}
+  th{background:#1e1b4b;color:#fff;font:600 .88rem 'Poppins';padding:13px 8px}
+  td{border:1px solid var(--line);padding:6px;text-align:center}
+  td.time{background:#f8fafc;font-size:.78rem;font-weight:600;color:var(--muted);white-space:nowrap;padding:6px 10px}
+  td.brk{background:repeating-linear-gradient(45deg,#fff7ed,#fff7ed 10px,#ffedd5 10px,#ffedd5 20px);color:#9a3412;font-weight:700;font-size:.82rem;letter-spacing:.06em}
+  td select{border:0;font-weight:600;font-size:.88rem;padding:10px 6px;text-align:center;text-align-last:center;cursor:pointer;border-radius:8px}
+  .empty{padding:50px 20px;text-align:center;color:var(--muted)}
+  #msg{font-size:.85rem;color:var(--muted);margin-top:12px;min-height:20px}
+
+  /* REVIEWS */
+  .quote p{font-size:.98rem;color:#334155;margin-bottom:16px}
+  .who{display:flex;align-items:center;gap:12px;font-size:.9rem}
+  .who i{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;color:#fff}
+  .who small{display:block;color:var(--muted)}
+
+  /* FAQ */
+  .faq{max-width:760px;margin:40px auto 0}
+  details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:12px}
+  summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:10px}
+  summary::after{content:"+";font-size:1.3rem;color:var(--brand)}
+  details[open] summary::after{content:"–"}
+  details p{margin-top:10px;color:var(--muted)}
+
+  /* CONTACT */
+  .contact{background:linear-gradient(135deg,#312e81,#6d28d9);color:#fff;border-radius:28px;padding:54px;text-align:center}
+  .contact p{opacity:.85;margin:10px auto 24px;max-width:520px}
+  .sub-form{display:flex;gap:10px;max-width:460px;margin:auto}
+  .sub-form input{flex:1}
+  .sub-form .btn{background:var(--accent);color:#fff}
+
+  footer{background:#0f172a;color:#94a3b8;padding:44px 0 26px;margin-top:84px}
+  .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px}
+  footer .logo{color:#fff}
+  footer a:hover{color:#fff}
+  .fl{display:flex;gap:22px;flex-wrap:wrap}
+  .copy{border-top:1px solid #1e293b;margin-top:26px;padding-top:18px;font-size:.85rem}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(24px);transition:.7s}
+  .rv.on{opacity:1;transform:none}
+
+  @media(max-width:900px){
+    .hero .wrap,.maker{grid-template-columns:1fr}
+    .grid3,.steps{grid-template-columns:1fr 1fr}
+    .mock{display:none}
+    .links{position:absolute;top:68px;left:0;right:0;background:#fff;flex-direction:column;padding:20px;border-bottom:1px solid var(--line);display:none}
+    .links.open{display:flex}
+    .menu{display:block}
+    .contact{padding:36px 20px}
+  }
+  @media(max-width:560px){.grid3,.steps{grid-template-columns:1fr}.sub-form{flex-direction:column}section{padding:60px 0}}
+
+  @media print{
+    body{background:#fff}
+    header,section:not(#maker),footer,.panel,.actions,#msg,.tag,.sub,.title{display:none!important}
+    #maker{padding:0;background:#fff}
+    .maker{display:block;margin:0}
+    .tablewrap{border:0}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="#home" class="logo"><i>🗓</i> SlotWise</a>
+    <button class="menu" id="menu" aria-label="Menu">☰</button>
+    <div class="links" id="links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#maker">Make Timetable</a>
+      <a href="#faq">FAQ</a>
+      <a href="#maker" class="btn btn-primary btn-sm">Start free</a>
+    </div>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="wrap">
+    <div>
+      <span class="tag">✨ 100% free • No sign up</span>
+      <h1>Make your perfect <span>timetable</span> in 2 minutes</h1>
+      <p>Add your subjects, pick your days and timings, and SlotWise builds a clean, colour-coded timetable. Print it, download it, or stick it on your wall.</p>
+      <div class="cta">
+        <a href="#maker" class="btn btn-primary">Make my timetable →</a>
+        <a href="#how" class="btn btn-ghost">See how it works</a>
+      </div>
+      <div class="stats">
+        <div><b>50K+</b><small>Timetables made</small></div>
+        <div><b>2 min</b><small>Average time</small></div>
+        <div><b>4.9★</b><small>Student rating</small></div>
+      </div>
+    </div>
+    <div class="mock" aria-hidden="true">
+      <div class="row"><div class="t"></div><div>Mon</div><div>Tue</div><div>Wed</div></div>
+      <div class="row"><div class="t">9:00</div><div class="c1">Maths</div><div class="c2">Physics</div><div class="c3">English</div></div>
+      <div class="row"><div class="t">10:00</div><div class="c4">Chem</div><div class="c1">Maths</div><div class="c5">CS</div></div>
+      <div class="row"><div class="t">11:00</div><div class="c3">English</div><div class="c5">CS</div><div class="c2">Physics</div></div>
+      <div class="row"><div class="t">12:00</div><div class="c2">Physics</div><div class="c4">Chem</div><div class="c1">Maths</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap center">
+    <span class="tag">Features</span>
+    <h2 class="title">Everything you need. Nothing you don't.</h2>
+    <p class="sub">Simple tools that save you time, so you can spend it studying (or sleeping).</p>
+    <div class="grid3">
+      <div class="card rv"><div class="ic">⚡</div><h3>Auto-fill</h3><p>One click spreads your subjects fairly across the week. No same subject back-to-back.</p></div>
+      <div class="card rv"><div class="ic">🎨</div><h3>Colour coded</h3><p>Every subject gets its own colour, so you can read your day in one second.</p></div>
+      <div class="card rv"><div class="ic">✏️</div><h3>Easy edit</h3><p>Don't like a slot? Change it with one tap. Your table updates instantly.</p></div>
+      <div class="card rv"><div class="ic">🖨️</div><h3>Print ready</h3><p>Clean print layout. Stick it on your desk or your wall.</p></div>
+      <div class="card rv"><div class="ic">⬇️</div><h3>Download</h3><p>Save as a CSV file and open it in Excel or Google Sheets.</p></div>
+      <div class="card rv"><div class="ic">💾</div><h3>Auto-save</h3><p>Your timetable is saved in your browser. Close the tab, come back later, it's still there.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section id="how" style="background:#fff">
+  <div class="wrap center">
+    <span class="tag">How it works</span>
+    <h2 class="title">4 easy steps</h2>
+    <p class="sub">If you can fill a form, you can make a timetable.</p>
+    <div class="steps">
+      <div class="step rv"><h3>Pick days & timings</h3><p>Choose school days, start time, number of periods and break.</p></div>
+      <div class="step rv"><h3>Add subjects</h3><p>Type each subject name and press Add.</p></div>
+      <div class="step rv"><h3>Auto-fill</h3><p>Press one button. Your table is ready.</p></div>
+      <div class="step rv"><h3>Print or save</h3><p>Fix any slot, then print or download.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MAKER -->
+<section id="maker">
+  <div class="wrap">
+    <div class="center">
+      <span class="tag">Try it now</span>
+      <h2 class="title">Timetable Maker</h2>
+      <p class="sub">Fill the left box, press Auto-fill, done.</p>
+    </div>
+
+    <div class="maker">
+      <!-- settings -->
+      <div class="panel">
+        <h3>1. Settings</h3>
+        <label>Days</label>
+        <div class="days" id="dayBox"></div>
+
+        <div class="two">
+          <div><label for="start">Start time</label><input type="time" id="start" value="09:00"></div>
+          <div><label for="plen">Period (min)</label><input type="number" id="plen" value="45" min="10" max="180"></div>
+        </div>
+        <div class="two">
+          <div><label for="pcount">Periods / day</label><input type="number" id="pcount" value="6" min="1" max="12"></div>
+          <div><label for="brkAfter">Break after</label><input type="number" id="brkAfter" value="3" min="0" max="12"></div>
+        </div>
+        <label for="brkLen">Break length (min)</label>
+        <input type="number" id="brkLen" value="20" min="5" max="90">
+
+        <h3 style="margin-top:26px">2. Subjects</h3>
+        <div class="addrow">
+          <input type="text" id="subj" placeholder="e.g. Maths" maxlength="20">
+          <button class="btn btn-primary btn-sm" id="addBtn">Add</button>
+        </div>
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <!-- table -->
+      <div>
+        <div class="actions">
+          <button class="btn btn-primary btn-sm" id="gen">⚡ Auto-fill</button>
+          <button class="btn btn-ghost btn-sm" id="clear">Clear</button>
+          <button class="btn btn-ghost btn-sm" id="print">🖨 Print</button>
+          <button class="btn btn-ghost btn-sm" id="csv">⬇ Download CSV</button>
+        </div>
+        <div class="tablewrap" id="out"></div>
+        <p id="msg"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section style="background:#fff">
+  <div class="wrap center">
+    <span class="tag">Loved by students</span>
+    <h2 class="title">What people say</h2>
+    <div class="grid3">
+      <div class="card quote rv"><p>"Made my exam-week timetable in two minutes. The colours helped me so much."</p><div class="who"><i style="background:#4f46e5">R</i><div style="text-align:left">Riya<small>Class 12 student</small></div></div></div>
+      <div class="card quote rv"><p>"I use it for my class timetable every new term. Print and done."</p><div class="who"><i style="background:#059669">M</i><div style="text-align:left">Mr. Sharma<small>School teacher</small></div></div></div>
+      <div class="card quote rv"><p>"Simple, fast, and no ads. Exactly what I wanted."</p><div class="who"><i style="background:#d97706">A</i><div style="text-align:left">Arjun<small>B.Tech first year</small></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap center">
+    <span class="tag">FAQ</span>
+    <h2 class="title">Common questions</h2>
+    <div class="faq" style="text-align:left">
+      <details><summary>Is SlotWise really free?</summary><p>Yes. No sign up, no payment, no limits.</p></details>
+      <details><summary>Where is my data saved?</summary><p>Only in your own browser. We do not send it to any server.</p></details>
+      <details><summary>Can I use it on my phone?</summary><p>Yes. The site works on phone, tablet and laptop.</p></details>
+      <details><summary>Can I edit after auto-fill?</summary><p>Yes. Tap any slot and pick a different subject.</p></details>
+      <details><summary>How do I get it in Excel?</summary><p>Press "Download CSV" and open the file in Excel or Google Sheets.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="contact">
+      <h2 class="title">Get free study tips</h2>
+      <p>One short email a week. Time management, study plans and exam hacks.</p>
+      <form class="sub-form" id="news">
+        <input type="email" id="mail" placeholder="Your email" required>
+        <button class="btn" type="submit">Subscribe</button>
+      </form>
+      <p id="newsMsg" style="margin-top:14px;font-size:.9rem"></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><a href="#home" class="logo"><i>🗓</i> SlotWise</a><p style="margin-top:10px;max-width:280px;font-size:.9rem">Free timetable maker for students and teachers.</p></div>
+      <div class="fl"><a href="#features">Features</a><a href="#how">How it works</a><a href="#maker">Maker</a><a href="#faq">FAQ</a></div>
+    </div>
+    <div class="copy">© <span id="yr"></span> SlotWise. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+  const ALL_DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const COLORS = [
+    ['#dbeafe','#1e40af'],['#dcfce7','#166534'],['#fef3c7','#92400e'],['#fce7f3','#9d174d'],
+    ['#ede9fe','#5b21b6'],['#ccfbf1','#115e59'],['#ffedd5','#9a3412'],['#e0f2fe','#075985'],
+    ['#fae8ff','#86198f'],['#ecfccb','#3f6212']
+  ];
+  const KEY = 'slotwise-v1';
+
+  let state = {
+    days:['Mon','Tue','Wed','Thu','Fri'],
+    subjects:['Maths','Physics','Chemistry','English','Computer'],
+    grid:{}   // "p-d" -> subject index
+  };
+
+  /* ---------- save / load ---------- */
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+  function load(){
+    try{
+      const s = JSON.parse(localStorage.getItem(KEY));
+      if(s && s.days && s.subjects && s.grid) state = s;
+    }catch(e){}
+  }
+
+  /* ---------- helpers ---------- */
+  const num = (id,def) => { const v = parseInt($(id).value,10); return isNaN(v)?def:v; };
+  const pad = n => String(n).padStart(2,'0');
+  function fmt(mins){
+    let h = Math.floor(mins/60)%24, m = mins%60, ap = h>=12?'PM':'AM';
+    h = h%12 || 12;
+    return h+':'+pad(m)+' '+ap;
+  }
+  function startMins(){
+    const [h,m] = ($('#start').value||'09:00').split(':').map(Number);
+    return h*60+m;
+  }
+  function say(t){ $('#msg').textContent = t; }
+
+  /* ---------- days ---------- */
+  function drawDays(){
+    $('#dayBox').innerHTML = ALL_DAYS.map(d =>
+      `<label><input type="checkbox" value="${d}" ${state.days.includes(d)?'checked':''}><span>${d}</span></label>`
+    ).join('');
+    $('#dayBox').querySelectorAll('input').forEach(cb=>{
+      cb.addEventListener('change',()=>{
+        state.days = ALL_DAYS.filter(d => $('#dayBox').querySelector(`input[value="${d}"]`).checked);
+        render(); save();
+      });
+    });
+  }
+
+  /* ---------- subjects ---------- */
+  function drawChips(){
+    $('#chips').innerHTML = state.subjects.map((s,i)=>{
+      const c = COLORS[i % COLORS.length];
+      return `<span class="chip" style="background:${c[0]};color:${c[1]}">${esc(s)}<button data-i="${i}" aria-label="Remove ${esc(s)}">×</button></span>`;
+    }).join('') || '<small style="color:#94a3b8">No subjects yet. Add one above.</small>';
+    $('#chips').querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const i = +b.dataset.i;
+        state.subjects.splice(i,1);
+        // fix grid indexes
+        Object.keys(state.grid).forEach(k=>{
+          if(state.grid[k]===i) delete state.grid[k];
+          else if(state.grid[k]>i) state.grid[k]--;
+        });
+        drawChips(); render(); save();
+      });
+    });
+  }
+  function esc(s){ return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function addSubject(){
+    const v = $('#subj').value.trim();
+    if(!v) return;
+    if(state.subjects.some(s=>s.toLowerCase()===v.toLowerCase())){ say('That subject is already added.'); return; }
+    if(state.subjects.length>=10){ say('Max 10 subjects.'); return; }
+    state.subjects.push(v);
+    $('#subj').value=''; say('');
+    drawChips(); render(); save();
+  }
+
+  /* ---------- table ---------- */
+  function render(){
+    const out = $('#out');
+    const P = Math.max(1,Math.min(12,num('#pcount',6)));
+    const plen = Math.max(10,num('#plen',45));
+    const bAfter = num('#brkAfter',0);
+    const bLen = Math.max(5,num('#brkLen',20));
+
+    if(!state.days.length || !state.subjects.length){
+      out.innerHTML = '<div class="empty">Pick at least one day and add at least one subject to see your table.</div>';
+      return;
+    }
+
+    let t = startMins();
+    let html = '<table><thead><tr><th>Time</th>' + state.days.map(d=>`<th>${d}</th>`).join('') + '</tr></thead><tbody>';
+
+    for(let p=0;p<P;p++){
+      html += `<tr><td class="time">${fmt(t)} – ${fmt(t+plen)}</td>`;
+      state.days.forEach((d,di)=>{
+        const key = p+'-'+d;
+        const cur = state.grid[key];
+        const c = cur!==undefined ? COLORS[cur % COLORS.length] : ['#fff','#94a3b8'];
+        html += `<td><select data-k="${key}" style="background:${c[0]};color:${c[1]}">
+          <option value="">—</option>` +
+          state.subjects.map((s,i)=>`<option value="${i}" ${cur===i?'selected':''}>${esc(s)}</option>`).join('') +
+          '</select></td>';
+      });
+      html += '</tr>';
+      t += plen;
+      if(bAfter>0 && p+1===bAfter && p+1<P){
+        html += `<tr><td class="time">${fmt(t)} – ${fmt(t+bLen)}</td><td class="brk" colspan="${state.days.length}">☕ BREAK</td></tr>`;
+        t += bLen;
+      }
+    }
+    html += '</tbody></table>';
+    out.innerHTML = html;
+
+    out.querySelectorAll('select').forEach(sel=>{
+      sel.addEventListener('change',()=>{
+        if(sel.value==='') delete state.grid[sel.dataset.k];
+        else state.grid[sel.dataset.k] = +sel.value;
+        render(); save();
+      });
+    });
+  }
+
+  /* ---------- auto fill ---------- */
+  function autofill(){
+    if(!state.days.length || !state.subjects.length){ say('Add days and subjects first.'); return; }
+    const P = Math.max(1,Math.min(12,num('#pcount',6)));
+    const n = state.subjects.length;
+    const total = new Array(n).fill(0);
+    state.grid = {};
+    state.days.forEach(d=>{
+      const day = new Array(n).fill(0);
+      let prev = -1;
+      for(let p=0;p<P;p++){
+        let best=-1, bestScore=Infinity;
+        for(let i=0;i<n;i++){
+          if(i===prev && n>1) continue;
+          const score = day[i]*10 + total[i] + Math.random()*2;
+          if(score<bestScore){ bestScore=score; best=i; }
+        }
+        state.grid[p+'-'+d] = best;
+        day[best]++; total[best]++; prev = best;
+      }
+    });
+    render(); save();
+    say('Done! Tap any slot to change it.');
+  }
+
+  /* ---------- CSV ---------- */
+  function downloadCSV(){
+    const P = num('#pcount',6), plen = num('#plen',45), bAfter = num('#brkAfter',0), bLen = num('#brkLen',20);
+    let t = startMins();
+    const rows = [['Time',...state.days]];
+    for(let p=0;p<P;p++){
+      rows.push([fmt(t)+' - '+fmt(t+plen), ...state.days.map(d=>{
+        const v = state.grid[p+'-'+d]; return v!==undefined ? state.subjects[v] : '';
+      })]);
+      t += plen;
+      if(bAfter>0 && p+1===bAfter && p+1<P){
+        rows.push([fmt(t)+' - '+fmt(t+bLen), ...state.days.map(()=>'BREAK')]);
+        t += bLen;
+      }
+    }
+    const csv = rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download = 'my-timetable.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    say('CSV downloaded.');
+  }
+
+  /* ---------- events ---------- */
+  $('#addBtn').addEventListener('click',addSubject);
+  $('#subj').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addSubject(); }});
+  $('#gen').addEventListener('click',autofill);
+  $('#clear').addEventListener('click',()=>{ state.grid={}; render(); save(); say('Cleared.'); });
+  $('#print').addEventListener('click',()=>window.print());
+  $('#csv').addEventListener('click',downloadCSV);
+  ['#start','#plen','#pcount','#brkAfter','#brkLen'].forEach(id=>$(id).addEventListener('input',render));
+
+  $('#menu').addEventListener('click',()=>$('#links').classList.toggle('open'));
+  $('#links').addEventListener('click',e=>{ if(e.target.tagName==='A') $('#links').classList.remove('open'); });
+
+  $('#news').addEventListener('submit',e=>{
+    e.preventDefault();
+    $('#newsMsg').textContent = '🎉 Thanks! You are on the list.';
+    $('#mail').value='';
+  });
+
+  $('#yr').textContent = new Date().getFullYear();
+
+  /* scroll reveal */
+  const io = new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('on'); io.unobserve(en.target);} }),{threshold:.15});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+  /* start */
+  load();
+  drawDays(); drawChips(); render();
+})();
+</script>
+</body>
+</html>
